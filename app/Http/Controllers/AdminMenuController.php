@@ -6,13 +6,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Menu;
 use Illuminate\Http\Request;
+use App\Models\Category;
 
 class AdminMenuController extends Controller
 {
     public function index()
     {
         $menus = Menu::all();
-        return view('admin.dashboard', compact('menus'));
+        $categories = Category::all();
+        return view('admin.dashboard', compact('menus', 'categories')); 
+    }
+
+    public function edit(Menu $menu)
+    {
+        $menus = Menu::all();
+        $categories = Category::all();
+        return view('admin.dashboard', compact('menu', 'menus', 'categories')); 
     }
 
     public function store(Request $request)
@@ -21,16 +30,11 @@ class AdminMenuController extends Controller
             'name' => 'required',
             'description' => 'required',
             'price' => 'required|numeric',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         Menu::create($request->all());
         return redirect()->route('admin.menus.index');
-    }
-
-    public function edit(Menu $menu)
-    {
-        $menus = Menu::all();
-        return view('admin.dashboard', compact('menu', 'menus'));
     }
 
     public function update(Request $request, Menu $menu)
@@ -39,11 +43,14 @@ class AdminMenuController extends Controller
             'name' => 'required',
             'description' => 'required',
             'price' => 'required|numeric',
+            'category_id' => 'required|exists:categories,id',
         ]);
-
+    
         $menu->update($request->all());
-        return redirect()->route('admin.menus.index');
+    
+        return redirect()->route('admin.menus.index')->with('success', 'Menu updated successfully');
     }
+    
 
     public function destroy(Menu $menu)
     {
