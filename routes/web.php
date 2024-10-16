@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\AdminMenuController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminMenuController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 Route::get('/', function () {
     return view('home', ['title' => 'Home Page']);
@@ -18,30 +18,31 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
     Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
+    Route::patch('/cart/update/{id}/{action}', [CartController::class, 'updateCartItem'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+    Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 });
+
 
 Route::get('/menu', function () {
     return view('menu.menus', ['title' => 'Monkeys', 'menus'=>App\Models\Menu::all()]);
 });
 
-// Admin routes - protected by 'auth' and 'admin' middleware
+Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
+
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
-    Route::resource('menus', AdminMenuController::class); // Menu resource routes (index, create, etc.)
+    Route::resource('menus', AdminMenuController::class);
 });
 
-// Admin dashboard
 Route::get('/admin', [AdminMenuController::class, 'index'])->middleware(['auth', 'admin'])->name('admin.dashboard');
 
-// Dashboard route (requires authentication and email verification)
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Authentication routes (login, logout, etc.)
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])
     ->name('login')
-    ->middleware('guest'); // Only allow guests to see the login page
+    ->middleware('guest');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->name('login.store');

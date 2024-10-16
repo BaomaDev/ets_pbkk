@@ -3,29 +3,19 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\{Category, Menu, Cart, CartItem, OrderDetail};
+use App\Models\Category;
+use App\Models\Menu;
 
 class DatabaseSeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
-        // Create 5 categories
-        Category::factory(5)->create()->each(function ($category) {
-            // For each category, create 5 menus
+        // Seed categories
+        Category::factory(10)->create()->each(function ($category) {
+            // Seed menus for each category
             Menu::factory(5)->create([
                 'category_id' => $category->id,
             ]);
         });
-
-        // Create 10 carts with items
-        Cart::factory(10)->create()->each(function ($cart) {
-            CartItem::factory(3)->create([
-                'cart_id' => $cart->id,
-            ]);
-        });
-
-        // Create 5 order details
-        OrderDetail::factory(5)->create();
     }
 }
-
