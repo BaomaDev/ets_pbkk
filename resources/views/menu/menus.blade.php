@@ -1,10 +1,9 @@
-@extends('layouts.app')
+@php
+    use Illuminate\Support\Str;
+@endphp
 
-@section('content')
-<div class="bg-white p-6 rounded-lg shadow-lg">
-    <h2 class="text-2xl font-bold mb-4">Welcome to Catering Service</h2>
-    <p>Explore our menu and order your favorite dishes.</p>
-</div>
+<x-layout>
+    <x-slot:title>{{ $title }}</x-slot:title>
 
 <div class="container mx-auto px-4">
     <h1 class="text-3xl font-bold mb-6">Our Menu</h1>
@@ -13,4 +12,4 @@
             <x-menu-card :menu="$menu" />
         @endforeach
     </div>
-@endsection
+</x-layout>

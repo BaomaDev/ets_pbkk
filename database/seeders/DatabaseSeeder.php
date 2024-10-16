@@ -2,22 +2,30 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\{Category, Menu, Cart, CartItem, OrderDetail};
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Create 5 categories
+        Category::factory(5)->create()->each(function ($category) {
+            // For each category, create 5 menus
+            Menu::factory(5)->create([
+                'category_id' => $category->id,
+            ]);
+        });
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Create 10 carts with items
+        Cart::factory(10)->create()->each(function ($cart) {
+            CartItem::factory(3)->create([
+                'cart_id' => $cart->id,
+            ]);
+        });
+
+        // Create 5 order details
+        OrderDetail::factory(5)->create();
     }
 }
+
